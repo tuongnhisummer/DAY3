@@ -1,3 +1,4 @@
+
 --1
 Select Country.continent, round(avg(city.population),0)
 From City
