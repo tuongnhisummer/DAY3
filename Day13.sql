@@ -45,27 +45,21 @@ WHERE EXISTS (
   AND EXTRACT(YEAR FROM curr_month.event_date) = 2022
 GROUP BY EXTRACT(MONTH FROM curr_month.event_date);
 --6
-with a as
-(select left(trans_date,7) as month, country, count(id) as trans_count, sum(amount) as trans_total_amount
+select Date_format(trans_date,'%Y-%m') as month, country, count(*) as trans_count, sum(case when state ='approved'then 1 else 0 end) as approved_count, sum(amount) as trans_total_amount, sum(case when state ='approved' then amount else 0 end) as approved_total_amount
 from Transactions
-Group by month, country), b as
-(select left(trans_date,7) as month, country, count(state) as approved_count, sum(amount) as approved_total_amount
-from Transactions
-where state ='approved'
-Group by month, country)
-select a.month, a. country, a.trans_count, b.approved_count, a.trans_total_amount, b.approved_total_amount
-From a
-join b
-on a.month = b.month and a.country = b.country
+group by month, country
 --7
-select a.product_id, a.year as first_year, a.quantity, a.price
-from sales a
+with a as
+(select product_id, min(year) as first_year, quantity, price From Sales
+Group by product_id)
+Select p.product_id, a.first_year, a.quantity, a.price
+From Product p
+Join  a
+on p.product_id = a.product_id
 group by product_id
 --8
 select customer_id
-from customer
-Group by customer_id
-having count(product_key) = (select count(*) from product)
+where count(distinct product_id) = (select count(product_key) from Product)
 --9
 select a.employee_id
 from Employees a
