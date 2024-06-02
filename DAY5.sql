@@ -5,6 +5,12 @@ WHERE ID%2=0
 --2
 SELECT COUNT (CITY) - COUNT (DISTINCT CITY)
 FROM STATION
+  ---3
+  with  a as
+(select replace(salary, 0,'' ) as salary
+from employees)
+select ceiling(avg(salary) -(select avg(salary) from a))
+from employees
 --4
 SELECT Round (CAST(sum( item_count*order_occurrences) / sum(order_occurrences) as decimal),1) as mean
 FROM items_per_order;
