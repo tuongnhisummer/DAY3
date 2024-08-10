@@ -6,19 +6,36 @@ On City.countrycode = Country.Code
 Group by Country.continent
 order by round(avg(city.population),0)
 --2
-SELECT cast(sum(case when t.signup_action='Confirmed' then 1 else 0 end) as real)/count(e.email_id) as activation_rate
+SELECT round(sum(case when t.signup_action ='Confirmed' then 1 else 0 end):: decimal/count( e.email_id),2)
 FROM emails e
 RIGHT JOIN texts t
 on e.email_id=t.email_id
 --3
-  Câu này em không nghĩ ra ạ
+  select age_bucket, round(sum(CASE 
+			WHEN ac.activity_type = 'send'
+				THEN 100.0*ac.time_spent
+			END) :: DECIMAL /sum(CASE 
+			WHEN ac.activity_type in ('open','send')
+				THEN ac.time_spent
+			END),2) as send_perc, round(sum(CASE 
+			WHEN ac.activity_type = 'open'
+				THEN 100.0*ac.time_spent
+			END) :: DECIMAL /sum(CASE 
+			WHEN ac.activity_type in ('open','send')
+				THEN ac.time_spent
+			END),2) as open_perc
+from activities ac 
+join age_breakdown ag 
+on ac.user_id = ag.user_id
+group by ag.age_bucket
+Câu này em không nghĩ ra ạ
 --4
 SELECT c.customer_id
 FROM customer_contracts c
 Join products p
 on c.product_id = p.product_id
 group by c.customer_id
-HAVING count(c.customer_id)>2
+HAVING count (c.customer_id)>2 and count(distinct product_category)>2
 --5
 select t1.employee_id, t1.name, count(t2.reports_to) as reports_count, round(avg(t2.age),0) as average_age
 from employees t1
