@@ -37,11 +37,12 @@ on c.product_id = p.product_id
 group by c.customer_id
 HAVING count (c.customer_id)>2 and count(distinct product_category)>2
 --5
-select t1.employee_id, t1.name, count(t2.reports_to) as reports_count, round(avg(t2.age),0) as average_age
+select t1.employee_id, t1.name, count(*) as reports_count, round(avg(t2.age),0) as average_age
 from employees t1
-left join employees t2
-on t1.employee_id = t2.reports_to
-where t2.reports_to is not null
+join employees t2
+on t2.reports_to =t1.employee_id 
+group by t1.employee_id
+order by employee_id
 --6 
 select t1.product_name, sum(t2.unit) as unit
 from products t1
