@@ -67,9 +67,15 @@ From film
 Order by replacement_cost
 Limit 1
 2.
- select 
-sum(case when replacement_cost >= 9.99 and replacement_cost <= 19.99 then 1 else 0 end) as low_count
-from film
+ with a as
+(select case when replacement_cost <=19.99 and replacement_cost >=9.99 then 'low'
+when replacement_cost >20.00 and replacement_cost <24.99 then 'medium'
+when replacement_cost >25.00 then 'high' end as s
+from film)
+select count (*)
+from a
+where s = 'low'
+	
 3.
 Select f.title, f.length, c.name
 From film f
