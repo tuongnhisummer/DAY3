@@ -57,6 +57,14 @@ From Product p
 Join  a
 on p.product_id = a.product_id
 group by product_id
+c2
+    select product_id, year as first_year, quantity, price
+from sales 
+where exists
+(select product_id, min(year)
+from sales
+group by product_id)
+group by product_id
 --8
 select customer_id
 where count(distinct product_id) = (select count(product_key) from Product)
